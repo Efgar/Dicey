@@ -1,0 +1,9 @@
+<div>
+  <p *ngFor="let diceLog of this.roomService.diceLogOutput | async">
+    {{diceLog.characterName}} rolled (
+    <b *ngFor="let dice of diceLog.dice">
+      {{dice.type + ' (' + dice.result + ') '}}
+    </b>
+    ) = {{diceLog.total}}
+  </p>
+</div>
