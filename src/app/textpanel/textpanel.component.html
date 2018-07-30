@@ -1,9 +1,16 @@
-<div>
-  <p *ngFor="let diceLog of this.roomService.diceLogOutput | async">
-    {{diceLog.characterName}} rolled (
-    <b *ngFor="let dice of diceLog.dice">
-      {{dice.type + ' (' + dice.result + ') '}}
-    </b>
-    ) = {{diceLog.total}}
-  </p>
+<div class="card">
+  <div class="card-header">
+    Recent rolls
+  </div>
+  <div class="card-block" style="display:flex; max-height: 75vh; overflow-y: scroll;"  #scrollMe [scrollTop]="scrollMe.scrollHeight">
+    <ul class="list-unstyled">
+      <li *ngFor="let diceLog of this.roomService.diceLogOutput | async">
+        {{diceLog.characterName}} rolled (
+        <b *ngFor="let dice of diceLog.dice">
+          {{dice.type + ' (' + dice.result + ') '}}
+        </b>
+        ) = {{diceLog.total}}
+      </li>
+    </ul>
+  </div>
 </div>
