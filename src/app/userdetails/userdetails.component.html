@@ -1,4 +1,66 @@
-{{(this.roomService.character | async)?.name}}
-{{(this.roomService.character | async)?.class}}
-{{(this.roomService.character | async)?.colorRGB}}
-<button mat-raised-button (click)="addItem()">Basic</button>
+<div class="card" style="margin: 0">
+    <div class="card-header">
+        {{(this.roomService.character | async)?.name}} {{(this.roomService.character | async)?.class}} {{(this.roomService.character|
+        async)?.colorRGB}}
+    </div>
+    <div class="card-block" style="min-height: 70vh; max-height: 70vh; overflow-y: auto;" #scrollMe [scrollTop]="scrollMe.scrollHeight">
+
+        <div class="card-columns card-columns-2">
+            <div class="card">
+                <div class="card-block">
+                    <div class="card-media-block">
+                        <img src="..." class="card-media-image">
+                        <div class="card-media-description">
+                            <span class="card-media-title">
+                                Roll name
+                            </span>
+                            <span class="card-media-text">
+                                Roll dices
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img">
+                    <img src="...">
+                </div>
+                <div class="card-block">
+                    <p class="card-text">
+                        ...
+                    </p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img">
+                    <img src="...">
+                </div>
+                <div class="card-block">
+                    <p class="card-text">
+                        ...
+                    </p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img">
+                    <img src="...">
+                </div>
+                <div class="card-block">
+                    <p class="card-text">
+                        ...
+                    </p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img">
+                    <img src="...">
+                </div>
+                <div class="card-block">
+                    <p class="card-text">
+                        ...
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

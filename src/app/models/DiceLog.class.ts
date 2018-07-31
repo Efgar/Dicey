@@ -1,9 +1,9 @@
 export class DiceLog {
     roomId: String;
     characterName: String;
-    userImageUrl: String;
-    colorRGB: String;
-    rollName: String;
+    userImageUrl: String = 'https://www.w3schools.com/howto/img_avatar.png';
+    colorRGB: String = 'red';
+    rollName: String = 'Testing';
     date: Date;
     dice: {
         type: String;
@@ -11,4 +11,8 @@ export class DiceLog {
     }[] = [];
     modifier: number;
     total: number;
+
+    public getsomething() {
+        return 'OMG';
+    }
 }

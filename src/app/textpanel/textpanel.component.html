@@ -1,15 +1,31 @@
-<div class="card">
+<div class="card" style="margin: 0">
   <div class="card-header">
     Recent rolls
   </div>
-  <div class="card-block" style="display:flex; max-height: 75vh; overflow-y: scroll;"  #scrollMe [scrollTop]="scrollMe.scrollHeight">
+  <div class="card-block" style="display:block; min-height: 70vh; max-height: 70vh; overflow-y: auto;" #scrollMe [scrollTop]="scrollMe.scrollHeight">
     <ul class="list-unstyled">
       <li *ngFor="let diceLog of this.roomService.diceLogOutput | async">
-        {{diceLog.characterName}} rolled (
-        <b *ngFor="let dice of diceLog.dice">
-          {{dice.type + ' (' + dice.result + ') '}}
-        </b>
-        ) = {{diceLog.total}}
+        <span [style.border-color]="diceLog.colorRGB" style="border-bottom:3px solid; position:relative; display:block; left: 5px; border-radius: 20%;">
+          <span style="position: relative; top: 10px; padding: 0 5px 0 0;">
+            <img src="{{diceLog.userImageUrl}}" style="border-radius: 50%; max-width:30px; max-height:30px;" alt="Avatar">
+          </span>
+          <b style="position: relative; top: 5px">{{diceLog.characterName}}</b>
+        </span>
+        <span style="display: block; text-align: right">
+          Rolled
+          <clr-tooltip>
+            <b clrTooltipTrigger>{{diceLog.total}}</b>
+            <clr-tooltip-content clrPosition="top-left" clrSize="md" *clrIfOpen>
+              <b *ngFor="let dice of diceLog.dice; let isLast=last">
+                1{{dice.type + '[' + dice.result + ']'}}{{isLast ? '' : ' + '}}
+              </b>
+              {{diceLog.modifier ? ' + ' + diceLog.modifier : ''}}
+            </clr-tooltip-content>
+          </clr-tooltip>
+          <span *ngIf="diceLog.rollName"> for
+            <b>{{diceLog.rollName}}.</b>
+          </span>
+        </span>
       </li>
     </ul>
   </div>
