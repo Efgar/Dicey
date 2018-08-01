@@ -8,12 +8,15 @@ export class Character {
     thumbnailUrl: String;
     colorRGB: String;
     diceCombination: {
+        iconName: String;
         rollName: String;
         dice: {
-            type: String;
+            maxValue: number;
             amount: Number;
         }[];
-        modifier: Number;
-    }[];
-
+        modifiers:{
+            name: string;
+            value: number;
+        }[];
+    }[] = new Array();
 }

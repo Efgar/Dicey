@@ -6,9 +6,12 @@ export class DiceLog {
     rollName: String;
     date: Date;
     dice: {
-        type: String;
+        maxValue: number;
         result: number;
     }[] = [];
-    modifier: number;
+    modifiers:{
+        name: string;
+        value: number;
+    }[] = [];
     total: number;
 }

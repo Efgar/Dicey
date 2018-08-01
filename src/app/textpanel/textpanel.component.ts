@@ -15,4 +15,8 @@ export class TextpanelComponent implements OnInit {
 
   ngOnInit() {
   }
+
+  public getAvatarImage(imageUrl: string): String{
+    return imageUrl ? imageUrl: 'assets/icons/dice-twenty-faces.png';
+  }
 }

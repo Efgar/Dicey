@@ -2,12 +2,45 @@
     <div class="card-header">
         {{this.roomService.character.name}}
     </div>
-    <div class="card-block" style="min-height: 70vh; max-height: 70vh; overflow-y: auto;" #scrollMe [scrollTop]="scrollMe.scrollHeight">
-        <div class="clr-row">
-            <div *ngFor="let diceCombination of this.roomService.character.diceCombination; let even = even" class="clr-col roll_button" (click)="addItem(diceCombination)">
-                <img src="../../assets/icons/dice-twenty-faces-twenty.png" style="border-radius: 50%; max-width:50px; max-height:50px;"> {{diceCombination.rollName}}
+    <div class="card-block user_actions">
+        <div class="clr-row" class="custom_roll_div">
+            <div class="card">
+                <div class="card-block ">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <input [(ngModel)]="customExpression" type="text" placeholder="Roll here (i.e. 1d20 + 2)" class="custom_roll_text">
+                        </div>
+                        <div class="col-sm-3">
+                            <button class="btn btn-sm btn-outline" (click)="doExpressionRoll()">
+                                Roll
+                            </button>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <button class="btn btn-sm btn-warning-outline" (click)="clearExpression()">
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <br/>
+        </div>
+        <div class="clr-row">
+            <div *ngFor="let diceCombination of this.roomService.character.diceCombination; let even = even" class="clr-col roll_button"
+                (click)="doDiceRoll(diceCombination)">
+                <clr-tooltip style="width: 100%">
+                    <img class="roll_button_icon" src="assets/icons/{{diceCombination.iconName?diceCombination.iconName:'dice-twenty-faces.png'}}"
+                        clrTooltipTrigger>
+                    <span class="roll_button_text" clrTooltipTrigger>
+                        {{diceCombination.rollName}}
+                    </span>
+                    <clr-tooltip-content clrSize="md">
+                        <b>{{diceCombination.rollName}}:</b>
+                        <br/>
+                        <i>{{this.roomService.diceArrayToExpresion(diceCombination)}}</i>
+                    </clr-tooltip-content>
+                </clr-tooltip>
+            </div>
         </div>
     </div>
 </div>

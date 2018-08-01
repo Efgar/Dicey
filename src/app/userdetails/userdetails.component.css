@@ -1,14 +1,47 @@
+.user_actions {
+    display: block;
+    min-height: 70vh;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.custom_roll_div {
+    display: flex;
+    margin-bottom: 10px
+}
+
+.custom_roll_text {
+    margin-right: 10px;
+}
+
 .roll_button {
+    margin-top: 5px;
     max-width: 50%;
     min-width: 50%;
     cursor: pointer;
-    position: relative;
-    background-position:center;
-    background-image:url('../../assets/images/border_actions.png');
+    background-position: center;
     background-size: 70% 70%;
     background-repeat: no-repeat;
+    background-image: url('../../assets/images/border_actions.png');
 }
 
-.roll_button hover {
-    
+.roll_button_icon {
+    background-color: grey;
+    border-radius: 50%;
+    max-width: 50px;
+    max-height: 50px;
+}
+
+.roll_button_text {
+    margin: 0 0 0 1%;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50%;
+    display: inline-block;
+}
+
+.roll_button:hover .roll_button_icon {
+    background-color: black;
 }
