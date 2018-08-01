@@ -14,6 +14,7 @@ import { TextpanelComponent } from './textpanel/textpanel.component';
 
 import { ClarityModule } from '@clr/angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RollcreatorComponent } from './rollcreator/rollcreator.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     LoginComponent,
     UserdetailsComponent,
     CanvasComponent,
-    TextpanelComponent
+    TextpanelComponent,
+    RollcreatorComponent
   ],
   imports: [
     BrowserModule,

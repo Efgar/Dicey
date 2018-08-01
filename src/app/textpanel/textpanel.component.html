@@ -6,8 +6,7 @@
     <ul class="list-unstyled">
       <li *ngFor="let diceLog of this.roomService.diceLogOutput | async">
         <span [style.border-color]="diceLog.colorRGB" class="dicelog-entry-header">
-          <img src="{{getAvatarImage(diceLog.userImageUrl)}}" [style.background]="diceLog.colorRGB"
-            class="character-image">
+          <img src="{{getAvatarImage(diceLog.userImageUrl)}}" [style.background]="diceLog.colorRGB" class="character-image">
           <b class="character-name">{{diceLog.characterName}}</b>
         </span>
         <span class="dicelog-entry-footer">
@@ -15,12 +14,12 @@
           <clr-tooltip>
             <b clrTooltipTrigger>{{diceLog.total}}</b>
             <clr-tooltip-content clrPosition="top-left" clrSize="md" *clrIfOpen>
-              <b *ngFor="let dice of diceLog.dice; let isLast=last">
-                1d{{dice.maxValue + '[' + dice.result + ']'}}{{isLast ? '' : ' + '}}
-              </b>
-              <b *ngFor="let mod of diceLog.modifiers; let isLast=last">
-                {{mod.name?'[' + mod.name + ']':''}}{{mod.value}}{{isLast ? '' : ' + '}}
-              </b>
+              <span *ngFor="let dice of diceLog.dice; let isLast=last">
+                1d{{dice.maxValue}} <b>[{{dice.result}}]</b> {{isLast ? '' : ' + '}}
+              </span>
+              <span *ngFor="let mod of diceLog.modifiers; let isLast=last">
+                + {{mod.name?mod.name:''}}<b>[{{mod.value}}]</b>
+              </span>
             </clr-tooltip-content>
           </clr-tooltip>
           <span *ngIf="diceLog.rollName"> for

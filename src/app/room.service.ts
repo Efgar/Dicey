@@ -26,7 +26,7 @@ export class RoomService {
 
     this.characterInfo = this.db.doc<Character>('Character/' + characterId);
     this.characterObservable = this.characterInfo.valueChanges();
-    this.characterObservable.subscribe(response => this.character = response);
+    this.characterObservable.subscribe(response => { if (response) { this.character = response } });
     this.roomId = roomId;
 
     this.mockServerInfo();
@@ -73,14 +73,14 @@ export class RoomService {
         const diceSplited = part.split('d');
         diceArray.push({ amount: diceSplited[0], maxValue: diceSplited[1] })
       } else if (/^\d+$/.test(part)) {
-        modifiersArray.push({ value: Number(part)});
+        modifiersArray.push({ value: Number(part) });
       }
     });
 
     let diceCombination: any = {};
     diceCombination.dice = diceArray;
     diceCombination.modifiers = modifiersArray;
-    
+
     return diceCombination;
   }
 

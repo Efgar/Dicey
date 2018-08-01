@@ -1,0 +1,18 @@
+<button class="btn btn-sm btn-outline" (click)="creatorOpened=true">
+    Add quick roll
+</button>
+<clr-modal [(clrModalOpen)]="creatorOpened" [clrModalClosable]="false">
+    <h3 class="modal-title">Create a quick roll button</h3>
+    <div class="modal-body">
+        <img class="new_roll_button_icon" src="('../../assets/icons/dice-twenty-faces.png">
+        <p>Roll name and stuff</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-sm btn-outline" (click)="creatorOpened=false;">
+            Save
+        </button>
+        <button class="btn btn-sm btn-warning-outline" (click)="creatorOpened=false;">
+            Cancel
+        </button>
+    </div>
+</clr-modal>
