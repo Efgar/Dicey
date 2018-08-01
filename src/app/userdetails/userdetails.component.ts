@@ -9,21 +9,21 @@ import { RoomService } from '../room.service';
 })
 export class UserdetailsComponent implements OnInit {
 
-  constructor(private roomService: RoomService) { }
+  constructor(private roomService: RoomService) {
+  }
 
   ngOnInit() {
   }
 
-  addItem() {
+  addItem(diceCombination: Object) {
     const newLog: DiceLog = new DiceLog();
-    newLog.characterName = 'Rodrigo Diaz';
+    newLog.characterName = this.roomService.character.name;
+    newLog.colorRGB = this.roomService.character.colorRGB;
+    newLog.userImageUrl = this.roomService.character.thumbnailUrl;
+    newLog.colorRGB = this.roomService.character.colorRGB;
     newLog.dice.push({ type: 'd4', result: 0});
-    newLog.dice.push({ type: 'd6', result: 0});
-    newLog.dice.push({ type: 'd8', result: 0});
-    newLog.dice.push({ type: 'd10', result: 0});
-    newLog.dice.push({ type: 'd12', result: 0});
-    newLog.dice.push({ type: 'd20', result: 0});
-    newLog.modifier = 2;
+    newLog.modifier = diceCombination['modifier'];
+    newLog.rollName = diceCombination['rollName'];
     this.roomService.addDiceThrow(newLog);
   }
 

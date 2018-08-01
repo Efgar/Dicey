@@ -11,7 +11,8 @@ export class RoomService {
   public diceLogOutput: Observable<DiceLog[]>;
   private diceLog: AngularFirestoreCollection<DiceLog>;
 
-  public character: Observable<Character>;
+  public character: Character = new Character();
+  private characterObservable: Observable<Character>;
   private characterInfo: AngularFirestoreDocument<Character>;
 
   private roomId: String;
@@ -24,8 +25,8 @@ export class RoomService {
     this.diceLogOutput = this.diceLog.valueChanges();
 
     this.characterInfo =  this.db.doc<Character>('Character/' + characterId);
-    this.character = this.characterInfo.valueChanges();
-
+    this.characterObservable = this.characterInfo.valueChanges();
+    this.characterObservable.subscribe(response => this.character = response);
     this.roomId = roomId;
   }
 

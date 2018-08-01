@@ -1,0 +1,14 @@
+.roll_button {
+    max-width: 50%;
+    min-width: 50%;
+    cursor: pointer;
+    position: relative;
+    background-position:center;
+    background-image:url('../../assets/images/border_actions.png');
+    background-size: 70% 70%;
+    background-repeat: no-repeat;
+}
+
+.roll_button hover {
+    
+}

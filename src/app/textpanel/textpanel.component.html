@@ -7,7 +7,7 @@
       <li *ngFor="let diceLog of this.roomService.diceLogOutput | async">
         <span [style.border-color]="diceLog.colorRGB" style="border-bottom:3px solid; position:relative; display:block; left: 5px; border-radius: 20%;">
           <span style="position: relative; top: 10px; padding: 0 5px 0 0;">
-            <img src="{{diceLog.userImageUrl}}" style="border-radius: 50%; max-width:30px; max-height:30px;" alt="Avatar">
+            <img src="{{diceLog.userImageUrl ? diceLog.userImageUrl : '../../assets/icons/dice-twenty-faces-twenty.png'}}" style="border-radius: 50%; max-width:30px; max-height:30px;" alt="Avatar">
           </span>
           <b style="position: relative; top: 5px">{{diceLog.characterName}}</b>
         </span>
