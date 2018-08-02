@@ -14,9 +14,33 @@ export class Character {
             maxValue: number;
             amount: Number;
         }[];
-        modifiers:{
+        modifiers: {
             name: string;
             value: number;
+            attributesReference: string;
         }[];
     }[] = new Array();
+    attributes: {
+        name: string;
+        value: number;
+        isCore: boolean;
+    }[] = new Array();
+
+    getAttributeModifier(modifier: any) {
+        let mod: any = modifier;
+        if (modifier.attributesReference) {
+            this.attributes.forEach(attr => {
+                if (attr.name === modifier.attributesReference) {
+                    mod.name = attr.name;
+                    mod.value = attr.value;
+                }
+            });
+
+            if (modifier.name) {
+                mod.name = modifier.name;
+            }
+        }
+
+        return mod;
+    }
 }

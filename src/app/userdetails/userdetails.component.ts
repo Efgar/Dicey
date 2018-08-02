@@ -42,7 +42,7 @@ export class UserdetailsComponent implements OnInit {
 
     if (diceCombination['modifiers']) {
       diceCombination['modifiers'].forEach(mod => {
-        newLog.modifiers.push(mod);
+        newLog.modifiers.push(this.roomService.character.getAttributeModifier(mod));
       });
     }
 
