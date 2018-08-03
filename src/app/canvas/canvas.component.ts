@@ -17,5 +17,4 @@ export class CanvasComponent implements OnInit {
   }
 
   constructor(private roomService: RoomService) { }
-
 }

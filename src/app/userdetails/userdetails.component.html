@@ -8,16 +8,16 @@
                 <div class="card-block ">
                     <div class="row">
                         <div class="col-sm-6">
-                            <input [(ngModel)]="customExpression" type="text" placeholder="Roll here (i.e. 1d20 + 2)" class="custom_roll_text">
+                            <input [(ngModel)]="customExpression" style="width:100%" type="text" placeholder="Roll here (i.e. 1d20 + 2)" class="custom_roll_text">
                         </div>
                         <div class="col-sm-3">
-                            <button class="btn btn-sm btn-outline" (click)="doExpressionRoll()">
+                            <button class="btn btn-sm btn-link" (click)="doExpressionRoll()">
                                 Roll
                             </button>
                         </div>
 
                         <div class="col-sm-3">
-                            <button class="btn btn-sm btn-warning-outline" (click)="clearExpression()">
+                            <button class="btn btn-sm btn-link" (click)="clearExpression()">
                                 Reset
                             </button>
                         </div>

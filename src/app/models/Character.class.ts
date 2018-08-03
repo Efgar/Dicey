@@ -27,7 +27,7 @@ export class Character {
     }[] = new Array();
 
     getAttributeModifier(modifier: any) {
-        let mod: any = modifier;
+        const mod: any = modifier;
         if (modifier.attributesReference) {
             this.attributes.forEach(attr => {
                 if (attr.name === modifier.attributesReference) {
