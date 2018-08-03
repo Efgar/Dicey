@@ -16,6 +16,7 @@ import { ClarityModule } from '@clr/angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RollcreatorComponent } from './rollcreator/rollcreator.component';
 import { DicetrayComponent } from './dicetray/dicetray.component';
+import { DiceService } from 'src/app/dice.service';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,7 @@ import { DicetrayComponent } from './dicetray/dicetray.component';
     BrowserAnimationsModule,
     ClarityModule
   ],
-  providers: [],
+  providers: [DiceService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

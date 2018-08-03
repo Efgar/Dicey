@@ -3,6 +3,7 @@ import * as CANNON from 'cannon';
 import * as THREE from 'three';
 import { Stats } from 'three-stats';
 import { DiceD6, DiceManager } from 'threejs-dice';
+import { Subject } from 'rxjs/internal/Subject';
 
 declare const require: (moduleId: string) => any;
 const OrbitControls = require('three-orbit-controls')(THREE);
@@ -22,6 +23,8 @@ export class DiceService {
   private readonly VIEW_ANGLE = 45;
   private readonly NEAR = 0.01;
   private readonly FAR = 20000;
+
+  results: Subject<{ value: number, color: any }[]> = new Subject();
 
   constructor() {
     window.addEventListener('resize', () => {
@@ -82,22 +85,6 @@ export class DiceService {
       }
     } else {
       this._scene.remove(this._skyBox);
-    }
-  }
-
-  set numberOfDice(value: DiceValue) {
-    const diceToAddOrRemove = value - this._dice.length;
-    if (diceToAddOrRemove > 0) {
-      const diceToAdd = diceToAddOrRemove;
-      this.addDice(diceToAdd);
-    } else {
-      let diceToRemove = -diceToAddOrRemove;
-      while (diceToRemove !== 0) {
-        const d = this._dice.pop();
-        console.log(this._dice.length);
-        this._scene.remove(d.getObject());
-        diceToRemove--;
-      }
     }
   }
 
