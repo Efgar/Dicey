@@ -1,8 +1,7 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import * as CANNON from 'cannon';
 import * as THREE from 'three';
-import { DiceService } from 'src/app/dice.service';
-import { DiceObject, DiceD4, DiceD6, DiceD8, DiceD10, DiceD12, DiceD20, DiceManager } from 'threejs-dice';
+import { DiceObject, DiceD4, DiceD6, DiceD8, DiceD10, DiceD12, DiceD20, DiceManager, DiceOptions } from 'threejs-dice';
 import { Subject } from 'rxjs/internal/Subject';
 import { RoomService } from '../room.service';
 
@@ -74,44 +73,48 @@ export class DicetrayComponent implements OnInit, OnDestroy {
       const dice: { dice: DiceObject, value: number }[] = [];
       diceLogOut.forEach(diceOut => {
         diceOut.dice.forEach(result => {
-          dice.push({ dice: this.getDie(result.maxValue, diceOut.colorRGB), value: result.result });
-        })
+          dice.push({ dice: this.getDie(result.maxValue, diceOut.colorRGB.toString()), value: result.result });
+        });
       });
 
       this.prepareValues(dice);
     });
   }
 
-  private getDie(maxValue: number, diceColor: String): DiceObject {
+  private getDie(maxValue: number, diceColor: string): DiceObject {
     let die: any;
-    switch (maxValue) {
-      case 4: {
-        die = new DiceD4();
+    const dieOptions: DiceOptions = {
+      size: 1.5,
+      backColor: diceColor
+    };
+    console.log(maxValue);
+    switch (maxValue.toString()) {
+      case '4': {
+        die = new DiceD4(dieOptions);
         break;
       }
-      case 6: {
-        die = new DiceD6();
+      case '6': {
+        die = new DiceD6(dieOptions);
         break;
       }
-      case 8: {
-        die = new DiceD8();
+      case '8': {
+        die = new DiceD8(dieOptions);
         break;
       }
-      case 10: {
-        die = new DiceD10();
+      case '10': {
+        die = new DiceD10(dieOptions);
         break;
       }
-      case 12: {
-        die = new DiceD12();
+      case '12': {
+        die = new DiceD12(dieOptions);
         break;
       }
-      case 20: {
-        die = new DiceD20();
+      case '20': {
+        console.log('!!!!');
+        die = new DiceD20(dieOptions);
         break;
       }
     }
-    die.size = 1.5;
-    die.backColor = diceColor;
     return die;
   }
 
@@ -188,7 +191,7 @@ export class DicetrayComponent implements OnInit, OnDestroy {
 
   private addControls() {
     this._controls = new OrbitControls(this._camera, this._renderer.domElement);
-    this._controls.enabled = false;
+    //this._controls.enabled = false;
   }
 
   private addAmbient() {
@@ -308,7 +311,7 @@ export class DicetrayComponent implements OnInit, OnDestroy {
     if (this._throwRunning) {
       throw new Error('Cannot start another throw. Please wait, till the current throw is finished.');
     }
-
+    console.log(diceValues);
     for (let i = 0; i < diceValues.length; i++) {
       if (diceValues[i].value < 1 || diceValues[i].dice.values < diceValues[i].value) {
         throw new Error('Cannot throw die to value ' +
