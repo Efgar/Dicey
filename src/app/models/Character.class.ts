@@ -24,6 +24,8 @@ export class Character {
         name: string;
         value: number;
         isCore: boolean;
+        isSaveThrow: boolean;
+        attributesReference: string[];
     }[] = new Array();
 
     getAttributeModifier(modifier: any) {
@@ -43,4 +45,61 @@ export class Character {
 
         return mod;
     }
+
+    getStandardDnDCharacterTemplate(){
+        let characterTemplate = new Character();
+        //Attributes
+        characterTemplate.attributes.push({
+            name: 'Prf',
+            value: 0,
+            isCore: false,
+            isSaveThrow: false,
+            attributesReference: []
+        });
+        characterTemplate.attributes.push({
+            name: 'Str',
+            value: 0,
+            isCore: true,
+            isSaveThrow: false,
+            attributesReference: []
+        });
+        characterTemplate.attributes.push({
+            name: 'Dex',
+            value: 0,
+            isCore: true,
+            isSaveThrow: false,
+            attributesReference: []
+        });
+        characterTemplate.attributes.push({
+            name: 'Con',
+            value: 0,
+            isCore: true,
+            isSaveThrow: false,
+            attributesReference: []
+        });
+        characterTemplate.attributes.push({
+            name: 'Int',
+            value: 0,
+            isCore: true,
+            isSaveThrow: false,
+            attributesReference: []
+        });
+        characterTemplate.attributes.push({
+            name: 'Wis',
+            value: 0,
+            isCore: true,
+            isSaveThrow: false,
+            attributesReference: []
+        });
+        characterTemplate.attributes.push({
+            name: 'Cha',
+            value: 0,
+            isCore: true,
+            isSaveThrow: false,
+            attributesReference: []
+        });
+        
+        //Skills
+    }
+    //Add skill
 }
