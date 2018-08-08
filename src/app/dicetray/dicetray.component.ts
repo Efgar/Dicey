@@ -2,9 +2,9 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import * as CANNON from 'cannon';
 import * as THREE from 'three';
 import { DiceService } from 'src/app/dice.service';
-import { DiceObject, DiceManager } from 'threejs-dice';
-import { Stats } from 'three-stats/dist';
+import { DiceObject, DiceD4, DiceD6, DiceD8, DiceD10, DiceD12, DiceD20, DiceManager } from 'threejs-dice';
 import { Subject } from 'rxjs/internal/Subject';
+import { RoomService } from '../room.service';
 
 declare const require: (moduleId: string) => any;
 const OrbitControls = require('three-orbit-controls')(THREE);
@@ -18,9 +18,9 @@ export class DicetrayComponent implements OnInit, OnDestroy {
 
   @ViewChild('container') canvasWrapper: ElementRef;
 
-  private _animationHandle: number;
+  private diceContainer: HTMLElement;
 
-  private _diceContainer: HTMLElement;
+  private _animationHandle: number;
   private _world: CANNON.World;
   private _dice: DiceObject[] = [];
   private _scene: THREE.Scene;
@@ -28,18 +28,20 @@ export class DicetrayComponent implements OnInit, OnDestroy {
   private _camera: THREE.PerspectiveCamera;
   private _skyBox: THREE.Mesh;
   private _controls: any;
-  private _stats: Stats;
   private _throwRunning: boolean;
-  private readonly VIEW_ANGLE = 45;
-  private readonly NEAR = 0.01;
-  private readonly FAR = 20000;
+
   results: Subject<{ value: number, color: any }[]> = new Subject();
 
 
-  constructor() { }
+  constructor(private roomService: RoomService) { }
+
+  ngOnDestroy(): void {
+    cancelAnimationFrame(this._animationHandle);
+    this._animationHandle = undefined;
+  }
 
   ngOnInit() {
-    this._diceContainer = this.canvasWrapper.nativeElement;
+    this.diceContainer = this.canvasWrapper.nativeElement;
     window.addEventListener('resize', () => {
       this._camera.aspect = this.aspect;
       this._camera.updateProjectionMatrix();
@@ -50,7 +52,6 @@ export class DicetrayComponent implements OnInit, OnDestroy {
     this.addCamera();
     this.createRenderer();
     this.addControls();
-    this.addStats();
     this.addAmbient();
     this.addDirectionalLight();
     this.addSpotlight();
@@ -66,41 +67,60 @@ export class DicetrayComponent implements OnInit, OnDestroy {
     this.addWallBody2();
 
 
-    this._diceContainer.appendChild(this.rendererDOMElement);
-    this._diceContainer.appendChild(this.statsDOMElement);
-    this._animationHandle = requestAnimationFrame(() => this.animate());
+    this.diceContainer.appendChild(this.rendererDOMElement);
+    this.animate();
+
+    this.roomService.diceLogOutput.subscribe(diceLogOut => {
+      const dice: { dice: DiceObject, value: number }[] = [];
+      diceLogOut.forEach(diceOut => {
+        diceOut.dice.forEach(result => {
+          dice.push({ dice: this.getDie(result.maxValue, diceOut.colorRGB), value: result.result });
+        })
+      });
+
+      this.prepareValues(dice);
+    });
   }
 
-  roll() {
-    /*
-    const diceValues: { dice: DiceD6, value: number }[] = [];
-
-    for (let i = 0; i < this._dice.length; i++) {
-      const yRand = Math.random() * 20;
-      this._dice[i].getObject().position.x = -15 - (i % 3) * 1.5;
-      this._dice[i].getObject().position.y = 2 + Math.floor(i / 3) * 1.5;
-      this._dice[i].getObject().position.z = -15 + (i % 3) * 1.5;
-      this._dice[i].getObject().quaternion.x = (Math.random() * 90 - 45) * Math.PI / 180;
-      this._dice[i].getObject().quaternion.z = (Math.random() * 90 - 45) * Math.PI / 180;
-      this._dice[i].updateBodyFromMesh();
-      const rand = Math.random() * 5 + 10;
-      this._dice[i].getObject().body.velocity.set(25 + rand, 40 + yRand, 15 + rand);
-      this._dice[i].getObject().body.angularVelocity.set(20 * Math.random() - 10, 20 * Math.random() - 10, 20 * Math.random() - 10);
-      diceValues.push({ dice: this._dice[i], value: i + 1 });
+  private getDie(maxValue: number, diceColor: String): DiceObject {
+    let die: any;
+    switch (maxValue) {
+      case 4: {
+        die = new DiceD4();
+        break;
+      }
+      case 6: {
+        die = new DiceD6();
+        break;
+      }
+      case 8: {
+        die = new DiceD8();
+        break;
+      }
+      case 10: {
+        die = new DiceD10();
+        break;
+      }
+      case 12: {
+        die = new DiceD12();
+        break;
+      }
+      case 20: {
+        die = new DiceD20();
+        break;
+      }
     }
-    this.prepareValues(diceValues);
-    */
+    die.size = 1.5;
+    die.backColor = diceColor;
+    return die;
   }
+
   private animate() {
     this._animationHandle = undefined;
     this.updatePhysics();
     this.render();
     this.update();
     this._animationHandle = requestAnimationFrame(() => this.animate());
-  }
-
-  private get diceContainer() {
-    return this._diceContainer;
   }
 
   private get width() {
@@ -115,20 +135,8 @@ export class DicetrayComponent implements OnInit, OnDestroy {
     return this.width / this.height;
   }
 
-  ngOnDestroy(): void {
-    cancelAnimationFrame(this._animationHandle);
-    this._animationHandle = undefined;
-  }
   get rendererDOMElement() {
     return this._renderer.domElement;
-  }
-
-  get statsDOMElement() {
-    return this._stats.domElement;
-  }
-
-  set statsVisible(value: boolean) {
-    this._stats.domElement.style.visibility = value ? 'visible' : 'hidden';
   }
 
   set skyBoxVisible(value: boolean) {
@@ -154,7 +162,6 @@ export class DicetrayComponent implements OnInit, OnDestroy {
 
   update() {
     this._controls.update();
-    this._stats.update();
   }
 
   render() {
@@ -162,7 +169,11 @@ export class DicetrayComponent implements OnInit, OnDestroy {
   }
 
   private addCamera() {
-    this._camera = new THREE.PerspectiveCamera(this.VIEW_ANGLE, this.aspect, this.NEAR, this.FAR);
+    const VIEW_ANGLE = 45;
+    const NEAR = 0.01;
+    const FAR = 20000;
+
+    this._camera = new THREE.PerspectiveCamera(VIEW_ANGLE, this.aspect, NEAR, FAR);
     this._scene.add(this._camera);
     this._camera.position.set(0, 30, 30);
   }
@@ -177,15 +188,7 @@ export class DicetrayComponent implements OnInit, OnDestroy {
 
   private addControls() {
     this._controls = new OrbitControls(this._camera, this._renderer.domElement);
-  }
-
-  private addStats() {
-    this._stats = new Stats();
-    this._stats.domElement.id = 'stats';
-    this._stats.domElement.style.position = 'relative';
-    this._stats.domElement.style.top = '-90%';
-    this._stats.domElement.style.left = '24px';
-    this._stats.domElement.style.zIndex = '100';
+    this._controls.enabled = false;
   }
 
   private addAmbient() {
