@@ -16,6 +16,8 @@ import { ClarityModule } from '@clr/angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RollcreatorComponent } from './rollcreator/rollcreator.component';
 import { DicetrayComponent } from './dicetray/dicetray.component';
+import { RoomlistComponent } from './roomlist/roomlist.component';
+import { CharactereditionComponent } from './characteredition/characteredition.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +27,9 @@ import { DicetrayComponent } from './dicetray/dicetray.component';
     CanvasComponent,
     TextpanelComponent,
     RollcreatorComponent,
-    DicetrayComponent
+    DicetrayComponent,
+    RoomlistComponent,
+    CharactereditionComponent
   ],
   imports: [
     BrowserModule,
