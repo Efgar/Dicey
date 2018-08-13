@@ -26,10 +26,10 @@ export class RoomService {
 
     this.characterInfo = this.db.doc<Character>('Character/' + characterId);
     this.characterObservable = this.characterInfo.valueChanges();
-    this.characterObservable.subscribe(response => { if (response) { this.character = response } });
+    this.characterObservable.subscribe(response => { if (response) { this.character = response; } });
     this.roomId = roomId;
 
-    this.mockServerInfo();
+    //this.mockServerInfo();
   }
 
   private mockServerInfo() {
@@ -46,6 +46,8 @@ export class RoomService {
 
     let diceObject3: any = { rollName: 'Initiative', dice: [{ maxValue: 6, amount: 6 }] };
     this.character.diceCombination.push(diceObject3);
+
+    this.characterInfo.set(JSON.parse(JSON.stringify(this.character)));
   }
 
   public addDiceThrow(diceThrow: DiceLog) {

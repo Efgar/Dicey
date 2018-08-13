@@ -5,11 +5,12 @@ export class DiceLog {
     colorRGB: String;
     rollName: String;
     date: Date;
+    rendered = false;
     dice: {
         maxValue: number;
         result: number;
     }[] = [];
-    modifiers:{
+    modifiers: {
         name: string;
         value: number;
     }[] = [];

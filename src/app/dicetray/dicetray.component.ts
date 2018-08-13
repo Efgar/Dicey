@@ -25,11 +25,8 @@ export class DicetrayComponent implements OnInit, OnDestroy {
   private _scene: THREE.Scene;
   private _renderer: THREE.WebGLRenderer;
   private _camera: THREE.PerspectiveCamera;
-  private _skyBox: THREE.Mesh;
   private _controls: any;
   private _throwRunning: boolean;
-
-  results: Subject<{ value: number, color: any }[]> = new Subject();
 
 
   constructor(private roomService: RoomService) { }
@@ -57,7 +54,6 @@ export class DicetrayComponent implements OnInit, OnDestroy {
     this.addFloorMesh();
     this.addWallMesh1();
     this.addWallMesh2();
-    this.addSkyBox();
     this.addFog();
 
     this.createWorld();
@@ -69,12 +65,17 @@ export class DicetrayComponent implements OnInit, OnDestroy {
     this.diceContainer.appendChild(this.rendererDOMElement);
     this.animate();
 
+
     this.roomService.diceLogOutput.subscribe(diceLogOut => {
       const dice: { dice: DiceObject, value: number }[] = [];
       diceLogOut.forEach(diceOut => {
-        diceOut.dice.forEach(result => {
-          dice.push({ dice: this.getDie(result.maxValue, diceOut.colorRGB.toString()), value: result.result });
-        });
+        console.log("asds" + diceOut.rendered);
+        if (!diceOut.rendered) {
+          diceOut.dice.forEach(result => {
+            dice.push({ dice: this.getDie(result.maxValue, diceOut.colorRGB.toString()), value: result.result });
+          });
+          diceOut.rendered = true;
+        }
       });
 
       this.prepareValues(dice);
@@ -87,7 +88,6 @@ export class DicetrayComponent implements OnInit, OnDestroy {
       size: 1.5,
       backColor: diceColor
     };
-    console.log(maxValue);
     switch (maxValue.toString()) {
       case '4': {
         die = new DiceD4(dieOptions);
@@ -115,6 +115,20 @@ export class DicetrayComponent implements OnInit, OnDestroy {
         break;
       }
     }
+
+    const yRand = Math.random() * 20;
+    die.getObject().position.x = -15 - (yRand % 3) * 1.5;
+    die.getObject().position.y = 2 + Math.floor(yRand / 3) * 1.5;
+    die.getObject().position.z = -15 + (yRand % 3) * 1.5;
+    die.getObject().quaternion.x = (Math.random() * 90 - 45) * Math.PI / 180;
+    die.getObject().quaternion.z = (Math.random() * 90 - 45) * Math.PI / 180;
+    die.updateBodyFromMesh();
+    const rand = Math.random() * 5;
+    die.getObject().body.velocity.set(25 + rand, 40 + yRand, 15 + rand);
+    die.getObject().body.angularVelocity.set(20 * Math.random() - 10, 20 * Math.random() - 10, 20 * Math.random() - 10);
+
+    this._scene.add(die.getObject());
+    this._dice.push(die);
     return die;
   }
 
@@ -140,17 +154,6 @@ export class DicetrayComponent implements OnInit, OnDestroy {
 
   get rendererDOMElement() {
     return this._renderer.domElement;
-  }
-
-  set skyBoxVisible(value: boolean) {
-    const sceneContainsSkyBox = this._scene.getObjectByName('skyBox');
-    if (value) {
-      if (!sceneContainsSkyBox) {
-        this._scene.add(this._skyBox);
-      }
-    } else {
-      this._scene.remove(this._skyBox);
-    }
   }
 
   updatePhysics() {
@@ -182,7 +185,7 @@ export class DicetrayComponent implements OnInit, OnDestroy {
   }
 
   private createRenderer() {
-    this._renderer = new THREE.WebGLRenderer({ antialias: true });
+    this._renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     this._renderer.setSize(this.width, this.height);
     this._renderer.domElement.id = 'renderer';
     this._renderer.shadowMap.enabled = true;
@@ -191,7 +194,7 @@ export class DicetrayComponent implements OnInit, OnDestroy {
 
   private addControls() {
     this._controls = new OrbitControls(this._camera, this._renderer.domElement);
-    //this._controls.enabled = false;
+    this._controls.enabled = false;
   }
 
   private addAmbient() {
@@ -246,14 +249,6 @@ export class DicetrayComponent implements OnInit, OnDestroy {
     wall2.translateZ(15);
     wall2.translateY(2.5);
     this._scene.add(wall2);
-  }
-
-  private addSkyBox() {
-    const skyBoxGeometry = new THREE.BoxGeometry(10000, 10000, 10000);
-    const skyBoxMaterial = new THREE.MeshPhongMaterial({ color: 0x9999ff, side: THREE.BackSide });
-    this._skyBox = new THREE.Mesh(skyBoxGeometry, skyBoxMaterial);
-    this._skyBox.name = 'skyBox';
-    this._scene.add(this._skyBox);
   }
 
   private addFog() {
@@ -311,7 +306,6 @@ export class DicetrayComponent implements OnInit, OnDestroy {
     if (this._throwRunning) {
       throw new Error('Cannot start another throw. Please wait, till the current throw is finished.');
     }
-    console.log(diceValues);
     for (let i = 0; i < diceValues.length; i++) {
       if (diceValues[i].value < 1 || diceValues[i].dice.values < diceValues[i].value) {
         throw new Error('Cannot throw die to value ' +
@@ -321,9 +315,7 @@ export class DicetrayComponent implements OnInit, OnDestroy {
           ' sides.');
       }
     }
-
     this._throwRunning = true;
-
     for (let i = 0; i < diceValues.length; i++) {
       diceValues[i].dice.simulationRunning = true;
       diceValues[i].vectors = diceValues[i].dice.getCurrentVectors();
@@ -343,9 +335,9 @@ export class DicetrayComponent implements OnInit, OnDestroy {
           allStable = false;
         }
       }
-
+      const results: Subject<{ value: number, color: any }[]> = new Subject();
       if (allStable) {
-        this.results.next(this._dice.map(d => {
+        results.next(this._dice.map(d => {
           return {
             value: d.getUpsideValue(),
             color: (<any>d).diceColor
