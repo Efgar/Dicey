@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DiceLog } from '../models/DiceLog.class';
 import { RoomService } from '../room.service';
+import { Character } from 'src/app/models/Character.class';
 
 @Component({
   selector: 'app-userdetails',
@@ -41,15 +42,19 @@ export class UserdetailsComponent implements OnInit {
     }
 
     if (diceCombination['modifiers']) {
-      diceCombination['modifiers'].forEach(mod => {
-        newLog.modifiers.push(this.roomService.character.getAttributeModifier(mod));
+      const aux: any[] = diceCombination['modifiers'];
+      aux.forEach(mod => {
+        newLog.modifiers.push(Character.getAttributeModifier(this.roomService.character, mod));
       });
     }
 
     newLog.rollName = diceCombination['rollName'];
 
+    /*
+    console.log("***** SENDING TO FIREBASE *****");
     console.log(newLog);
-
+    console.log("******************************");
+    */
     this.roomService.addDiceThrow(newLog);
   }
 

@@ -4,6 +4,12 @@ import * as THREE from 'three';
 import { DiceObject, DiceD4, DiceD6, DiceD8, DiceD10, DiceD12, DiceD20, DiceManager, DiceOptions } from 'threejs-dice';
 import { Subject } from 'rxjs/internal/Subject';
 import { RoomService } from '../room.service';
+import { filter, map, take, takeLast } from 'rxjs/operators';
+import { last } from 'rxjs/internal/operators/last';
+import { distinctUntilChanged } from 'rxjs/internal/operators/distinctUntilChanged';
+import { distinct } from 'rxjs/internal/operators/distinct';
+import { skip } from 'rxjs/internal/operators/skip';
+import { first } from 'rxjs/internal/operators/first';
 
 declare const require: (moduleId: string) => any;
 const OrbitControls = require('three-orbit-controls')(THREE);
@@ -65,11 +71,10 @@ export class DicetrayComponent implements OnInit, OnDestroy {
     this.diceContainer.appendChild(this.rendererDOMElement);
     this.animate();
 
-
-    this.roomService.diceLogOutput.subscribe(diceLogOut => {
+    this.roomService.latestDiceLogOutput.subscribe(diceLogOut => {
+      console.log("OMGOMGOMG")
       const dice: { dice: DiceObject, value: number }[] = [];
       diceLogOut.forEach(diceOut => {
-        console.log("asds" + diceOut.rendered);
         if (!diceOut.rendered) {
           diceOut.dice.forEach(result => {
             dice.push({ dice: this.getDie(result.maxValue, diceOut.colorRGB.toString()), value: result.result });
@@ -110,7 +115,6 @@ export class DicetrayComponent implements OnInit, OnDestroy {
         break;
       }
       case '20': {
-        console.log('!!!!');
         die = new DiceD20(dieOptions);
         break;
       }
@@ -126,7 +130,7 @@ export class DicetrayComponent implements OnInit, OnDestroy {
     const rand = Math.random() * 5;
     die.getObject().body.velocity.set(25 + rand, 40 + yRand, 15 + rand);
     die.getObject().body.angularVelocity.set(20 * Math.random() - 10, 20 * Math.random() - 10, 20 * Math.random() - 10);
-
+    die.backColor = '000000';
     this._scene.add(die.getObject());
     this._dice.push(die);
     return die;

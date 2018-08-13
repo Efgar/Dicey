@@ -28,10 +28,10 @@ export class Character {
         attributesReference: string[];
     }[] = new Array();
 
-    getAttributeModifier(modifier: any) {
+    static getAttributeModifier(object: Character, modifier: any): any {
         const mod: any = modifier;
         if (modifier.attributesReference) {
-            this.attributes.forEach(attr => {
+            object.attributes.forEach(attr => {
                 if (attr.name === modifier.attributesReference) {
                     mod.name = attr.name;
                     mod.value = attr.value;
@@ -46,7 +46,7 @@ export class Character {
         return mod;
     }
 
-    getStandardDnDCharacterTemplate(){
+    getStandardDnDCharacterTemplate() {
         let characterTemplate = new Character();
         //Attributes
         characterTemplate.attributes.push({

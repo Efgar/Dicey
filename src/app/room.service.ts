@@ -11,6 +11,9 @@ export class RoomService {
   public diceLogOutput: Observable<DiceLog[]>;
   private diceLog: AngularFirestoreCollection<DiceLog>;
 
+  public latestDiceLogOutput: Observable<DiceLog[]>;
+  private latestDiceLog: AngularFirestoreCollection<DiceLog>;
+
   public character: Character = new Character();
   private characterObservable: Observable<Character>;
   private characterInfo: AngularFirestoreDocument<Character>;
@@ -24,9 +27,12 @@ export class RoomService {
     this.diceLog = this.db.collection<DiceLog>('DiceLog', ref => ref.where('roomId', '==', roomId).orderBy('date'));
     this.diceLogOutput = this.diceLog.valueChanges();
 
+    this.latestDiceLog = this.db.collection<DiceLog>('DiceLog', ref => ref.where('roomId', '==', roomId).orderBy('date', 'desc').limit(1));
+    this.latestDiceLogOutput = this.latestDiceLog.valueChanges();
+
     this.characterInfo = this.db.doc<Character>('Character/' + characterId);
     this.characterObservable = this.characterInfo.valueChanges();
-    this.characterObservable.subscribe(response => { if (response) { this.character = response; } });
+    this.characterObservable.subscribe(response => { if (response) {  this.character = response; } });
     this.roomId = roomId;
 
     //this.mockServerInfo();
