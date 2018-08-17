@@ -33,6 +33,7 @@ export class DicetrayComponent implements OnInit, OnDestroy {
   private _camera: THREE.PerspectiveCamera;
   private _controls: any;
   private _throwRunning: boolean;
+  test: boolean;
 
 
   constructor(private roomService: RoomService) { }
@@ -57,9 +58,6 @@ export class DicetrayComponent implements OnInit, OnDestroy {
     this.addAmbient();
     this.addDirectionalLight();
     this.addSpotlight();
-    this.addFloorMesh();
-    this.addWallMesh1();
-    this.addWallMesh2();
     this.addFog();
 
     this.createWorld();
@@ -72,7 +70,6 @@ export class DicetrayComponent implements OnInit, OnDestroy {
     this.animate();
 
     this.roomService.latestDiceLogOutput.subscribe(diceLogOut => {
-      console.log("OMGOMGOMG")
       const dice: { dice: DiceObject, value: number }[] = [];
       diceLogOut.forEach(diceOut => {
         if (!diceOut.rendered) {
@@ -130,9 +127,9 @@ export class DicetrayComponent implements OnInit, OnDestroy {
     const rand = Math.random() * 5;
     die.getObject().body.velocity.set(25 + rand, 40 + yRand, 15 + rand);
     die.getObject().body.angularVelocity.set(20 * Math.random() - 10, 20 * Math.random() - 10, 20 * Math.random() - 10);
-    die.backColor = '000000';
     this._scene.add(die.getObject());
     this._dice.push(die);
+    setTimeout(() => this._scene.remove(die.getObject()), 3500);
     return die;
   }
 
@@ -179,17 +176,17 @@ export class DicetrayComponent implements OnInit, OnDestroy {
   }
 
   private addCamera() {
-    const VIEW_ANGLE = 45;
-    const NEAR = 0.01;
-    const FAR = 20000;
+    const VIEW_ANGLE = 40;
+    const NEAR = 1;
+    const FAR = this.height / this.aspect / Math.tan(10 * Math.PI / 180);
 
     this._camera = new THREE.PerspectiveCamera(VIEW_ANGLE, this.aspect, NEAR, FAR);
     this._scene.add(this._camera);
-    this._camera.position.set(0, 30, 30);
+    this._camera.position.set(0, VIEW_ANGLE + 5, 0);
   }
 
   private createRenderer() {
-    this._renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    this._renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false });
     this._renderer.setSize(this.width, this.height);
     this._renderer.domElement.id = 'renderer';
     this._renderer.shadowMap.enabled = true;
@@ -207,7 +204,7 @@ export class DicetrayComponent implements OnInit, OnDestroy {
   }
 
   private addDirectionalLight() {
-    const directionalLight = new THREE.DirectionalLight('#ffffff', 0.5);
+    const directionalLight = new THREE.DirectionalLight('#ffffff', 0.2);
     directionalLight.position.x = -1000;
     directionalLight.position.y = 1000;
     directionalLight.position.z = 1000;
@@ -215,7 +212,7 @@ export class DicetrayComponent implements OnInit, OnDestroy {
   }
 
   private addSpotlight() {
-    const light = new THREE.SpotLight(0xefdfd5, 1.3);
+    const light = new THREE.SpotLight(0xefdfd5, 0.5);
     light.position.y = 100;
     light.castShadow = true;
     light.shadow.camera.near = 50;
@@ -223,36 +220,6 @@ export class DicetrayComponent implements OnInit, OnDestroy {
     light.shadow.mapSize.width = 1024;
     light.shadow.mapSize.height = 1024;
     this._scene.add(light);
-  }
-
-  private addFloorMesh() {
-    const floorMaterial = new THREE.MeshPhongMaterial({ color: '#222222', side: THREE.DoubleSide });
-    const floorGeometry = new THREE.PlaneGeometry(30, 30, 10, 10);
-    const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-    floor.receiveShadow = true;
-    floor.rotation.x = Math.PI / 2;
-    this._scene.add(floor);
-  }
-
-  private addWallMesh1() {
-    const wallMaterial = new THREE.MeshPhongMaterial({ color: '#222222', side: THREE.DoubleSide });
-    const wallGeometry = new THREE.PlaneGeometry(30, 5, 10, 10);
-    const wall = new THREE.Mesh(wallGeometry, wallMaterial);
-    wall.receiveShadow = true;
-    wall.rotation.y = Math.PI / 2;
-    wall.translateZ(15);
-    wall.translateY(2.5);
-    this._scene.add(wall);
-  }
-
-  private addWallMesh2() {
-    const wallMaterial = new THREE.MeshPhongMaterial({ color: '#222222', side: THREE.DoubleSide });
-    const wallGeometry = new THREE.PlaneGeometry(30, 5, 10, 10);
-    const wall2 = new THREE.Mesh(wallGeometry, wallMaterial);
-    wall2.receiveShadow = true;
-    wall2.translateZ(15);
-    wall2.translateY(2.5);
-    this._scene.add(wall2);
   }
 
   private addFog() {
@@ -349,6 +316,7 @@ export class DicetrayComponent implements OnInit, OnDestroy {
         }));
         DiceManager.world.removeEventListener('postStep', check);
         for (let i = 0; i < diceValues.length; i++) {
+          diceValues[i].dice.shiftUpperValue(diceValues[i].value);
           diceValues[i].dice.setVectors(diceValues[i].vectors);
           diceValues[i].dice.simulationRunning = false;
         }

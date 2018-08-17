@@ -49,12 +49,6 @@ export class UserdetailsComponent implements OnInit {
     }
 
     newLog.rollName = diceCombination['rollName'];
-
-    /*
-    console.log("***** SENDING TO FIREBASE *****");
-    console.log(newLog);
-    console.log("******************************");
-    */
     this.roomService.addDiceThrow(newLog);
   }
 

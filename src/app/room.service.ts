@@ -72,7 +72,6 @@ export class RoomService {
   }
 
   public diceExpresionToDiceArray(diceExpression: string) {
-    console.log(diceExpression);
     let diceArray: any[] = [];
     let modifiersArray: any[] = [];
     diceExpression = diceExpression.replace(/\s/g, '');
